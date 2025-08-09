@@ -1,0 +1,27 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0B0B0B;
+  --fg: #F7F7F7;
+  --brand: #FFD400;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+a { color: var(--brand); }
+.btn {
+  @apply inline-flex items-center justify-center rounded-md px-4 py-2 font-medium transition;
+  background: var(--brand); color: #0B0B0B;
+}
+.btn:focus { @apply outline-none ring-2 ring-offset-2 ring-yellow-400; }
+.card { @apply bg-white/5 border border-white/10 rounded-md p-4; }
+input, select, textarea { @apply bg-white/10 border border-white/20 rounded-md px-3 py-2 w-full text-white placeholder-white/60; }
+label { @apply text-sm text-white/80; }
+nav a { @apply hover:underline; }

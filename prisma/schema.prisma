@@ -1,0 +1,113 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  role      Role     @default(client)
+  createdAt DateTime @default(now())
+  profile   Profile?
+  logs      Log[]
+  checkins  Checkin[]
+}
+
+model Profile {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id])
+  stage            Stage
+  trimester        Int?
+  postpartumWeeks  Int?
+  deliveryDate     DateTime?
+  cSection         Boolean?
+  diastasisCm      Decimal?
+  notes            String?
+}
+
+model Program {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  stageTag    String?
+  createdBy   String?
+  workouts    Workout[]
+}
+
+model Workout {
+  id         String  @id @default(cuid())
+  programId  String
+  program    Program @relation(fields: [programId], references: [id])
+  dayIndex   Int
+  title      String
+  notes      String?
+  items      WorkoutExercise[]
+}
+
+model Exercise {
+  id                 String  @id @default(cuid())
+  name               String
+  videoUrl           String?
+  coachingNotes      String?
+  postpartumCautions String?
+  logs               Log[]
+  items              WorkoutExercise[]
+}
+
+model WorkoutExercise {
+  id          String   @id @default(cuid())
+  workoutId   String
+  exerciseId  String
+  order       Int
+  targetReps  Int?
+  targetRPE   Decimal?
+  workout     Workout  @relation(fields: [workoutId], references: [id])
+  exercise    Exercise @relation(fields: [exerciseId], references: [id])
+}
+
+model Log {
+  id          String   @id @default(cuid())
+  userId      String
+  date        DateTime @default(now())
+  exerciseId  String
+  setNo       Int
+  weightKg    Decimal?
+  reps        Int?
+  rpe         Decimal?
+  symptomsFlag Boolean  @default(false)
+  pain        Int?
+  notes       String?
+  user        User     @relation(fields: [userId], references: [id])
+  exercise    Exercise @relation(fields: [exerciseId], references: [id])
+  @@index([userId, date])
+}
+
+model Checkin {
+  id     String   @id @default(cuid())
+  userId String
+  date   DateTime @default(now())
+  sleep  Int
+  mood   Int
+  steps  Int?
+  pain   Int?
+  notes  String?
+  user   User     @relation(fields: [userId], references: [id])
+  @@index([userId, date])
+}
+
+enum Role {
+  coach
+  client
+}
+
+enum Stage {
+  pregnancy
+  postpartum
+}
